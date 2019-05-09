@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Chess</string>
+    <string name="playsp">Play Singleplayer</string>
+    <string name="button">Button</string>
+    <string name="options">Options</string>
+    <string name="playmp">Play multiplayer</string>
+    <string name="stats">Stats</string>
+    <string name="undo">Undo</string>
+    <string name="description">The chess board</string>
+</resources>
