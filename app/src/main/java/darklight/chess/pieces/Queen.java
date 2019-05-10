@@ -9,7 +9,12 @@ import darklight.chess.Side;
 
 public class Queen extends ChessPiece{
 
-	public Queen(Side color) 
+	@Override
+	public int getValue() {
+		return 9;
+	}
+
+	public Queen(Side color)
 	{
 		super(color);
 		this.pieceType = Piece.QUEEN;

@@ -10,7 +10,12 @@ import darklight.chess.Side;
 public class Rook extends ChessPiece
 {
 
-	public Rook(Side color) 
+	@Override
+	public int getValue() {
+		return 5;
+	}
+
+	public Rook(Side color)
 	{
 		super(color);
 		this.pieceType = Piece.ROOK;

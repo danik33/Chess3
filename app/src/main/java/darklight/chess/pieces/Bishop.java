@@ -15,7 +15,13 @@ public class Bishop extends ChessPiece
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public Bishop(Side color) 
+	@Override
+	public int getValue()
+	{
+		return 3;
+	}
+
+	public Bishop(Side color)
 	{
 		super(color);
 		this.pieceType = Piece.BISHOP;

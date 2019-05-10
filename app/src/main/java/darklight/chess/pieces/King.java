@@ -14,7 +14,12 @@ import darklight.chess.board.Tile;
 public class King extends ChessPiece 
 {
 
-	public King(Side color) 
+	@Override
+	public int getValue() {
+		return 100;
+	}
+
+	public King(Side color)
 	{
 		super(color);
 		this.pieceType = Piece.KING;

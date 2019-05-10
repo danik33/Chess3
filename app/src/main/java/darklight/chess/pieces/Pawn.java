@@ -13,8 +13,13 @@ public class Pawn extends ChessPiece
 
 	boolean justDoubleMoved;
 	int offsetfordm;
-	
-	public Pawn(Side color) 
+
+	@Override
+	public int getValue() {
+		return 1;
+	}
+
+	public Pawn(Side color)
 	{
 		super(color);
 		this.justDoubleMoved = false;

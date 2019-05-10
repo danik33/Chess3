@@ -8,7 +8,12 @@ import darklight.chess.Side;
 
 public class Knight extends ChessPiece{
 
-	public Knight(Side color) 
+	@Override
+	public int getValue() {
+		return 3;
+	}
+
+	public Knight(Side color)
 	{
 		super(color);
 		this.pieceType = Piece.KNIGHT;

@@ -15,7 +15,9 @@ public abstract class ChessPiece implements Serializable
 	protected Piece pieceType;
 	protected Side color;
 	protected boolean moved;
-	protected boolean alive; 
+	protected boolean alive;
+
+	public abstract int getValue();
 	
 	public ChessPiece(Side color)
 	{
