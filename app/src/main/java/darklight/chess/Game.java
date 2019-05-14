@@ -31,8 +31,7 @@ public class Game implements Serializable
 	private Point selected;
 	
 	private ArrayList<Point> shownMoves;
-	
-	boolean needToRepaint;
+
 	
 	
 	
@@ -293,9 +292,14 @@ public class Game implements Serializable
 		
 		if(!isAttacked(king, s, sim))
 		{
+			System.out.println("Isn't attacked, Move from: (" + x + ", " + y + "), " + mv);
 			if(!avMoves.contains(new Point(x + mv.getX(), y + mv.getY())))
 				avMoves.add(new Point(x + mv.getX(), y + mv.getY()));
 			return true;
+		}
+		else
+		{
+			System.out.println("Attacked, Move from: (" + x + ", " + y + "), " + mv);
 		}
 		return false;
 		
@@ -377,7 +381,6 @@ public class Game implements Serializable
 					{
 						for(SourceMove sm : process(ch.possibleMoves(), i, j, br))
 						{
-//							System.out.println(sm);
 							if(!sm.getMove().isSpecial())
 							{
 								Point pn = sm.getDestination();

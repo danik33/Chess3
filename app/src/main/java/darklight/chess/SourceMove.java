@@ -3,52 +3,55 @@ package darklight.chess;
 import android.graphics.Point;
 
 
-public class SourceMove extends Move{
+public class SourceMove {
 
 	private int sourceX, sourceY;
-
-
-	public SourceMove(int sourceX, int sourceY, int x, int y)
+	private Move m;
+	
+	public SourceMove(int sourceX, int sourceY, int x, int y) 
 	{
-		this.sourceX = sourceX;
+		this.m = new Move(x, y);
+		this.sourceX = sourceX; 
 		this.sourceY = sourceY;
 	}
 	public SourceMove(Point p, Move m)
 	{
+		this.m = m;
 		this.sourceX = p.x;
 		this.sourceY = p.y;
 	}
-
+	
 	public SourceMove(int sourceX, int sourceY, Move m)
 	{
+		this.m = m;
 		this.sourceX = sourceX;
 		this.sourceY = sourceY;
 	}
-
-	public Move getMove() { return this; }
-
+	
+	public Move getMove() { return this.m; }
+	
 	public Point getDestination()
 	{
-		return new Point(sourceX + getX(), sourceY + getY());
+		return new Point(sourceX + m.getX(), sourceY + m.getY());
 	}
 	public Point getSource()
 	{
 		return new Point(sourceX, sourceY);
 	}
-
+	
 	public int getX() { return this.sourceX; }
 	public int getY() { return this.sourceY; }
-
+	
 	@Override
 	public String toString()
 	{
 		String from = "Move from: (" + sourceX + ", " + sourceY + ")";
-		if(!isRepeatable())
+		if(!m.isRepeatable())
 			return  from + " to (" + getDestination().x + ", " + getDestination().y + ")";
 		else
-			return from + " repeatable to [" + getX() + ", " + getY() + "]";
+			return from + " repeatable to [" + m.getX() + ", " + m.getY() + "]";
 	}
-
+	
 	@Override
 	public boolean equals(Object b)
 	{
@@ -57,7 +60,7 @@ public class SourceMove extends Move{
 		else
 		{
 			SourceMove m2 = (SourceMove)b;
-			if(m2.sourceX == this.sourceX && m2.sourceY == this.sourceY && m2.getX() == getX() && m2.getY() == getY())
+			if(m2.m.equals(this.m) && m2.sourceX == this.sourceX && m2.sourceY == this.sourceY)
 				return true;
 		}
 		return false;

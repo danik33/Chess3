@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import darklight.chess.Move;
 import darklight.chess.Piece;
 import darklight.chess.Side;
+import darklight.chess.SourceMove;
 import darklight.chess.pieces.Bishop;
 import darklight.chess.pieces.ChessPiece;
 import darklight.chess.pieces.King;
@@ -27,6 +28,7 @@ public class Board implements Serializable
 	public Point bKingLocation, wKingLocation;
 	public boolean rotated;
 	public boolean real;
+	public SourceMove lastMove;
 	
 	
 	public Board()
@@ -67,6 +69,7 @@ public class Board implements Serializable
 		}
 		rotated = b.rotated;
 		real = b.real;
+		lastMove = b.lastMove;
 	}
 	
 	
@@ -106,15 +109,14 @@ public class Board implements Serializable
 		return board[a.x][a.y].getOccupied();
 	}
 
+	public SourceMove getLastMove() { return lastMove; }
 
 
-	
-
-	
 	public void move(Point p1, Move m)
 	{
 		Tile destTile = board[p1.x + m.getX()][p1.y + m.getY()];
 		Tile initTile = board[p1.x][p1.y];
+		lastMove = new SourceMove(p1.x, p1.y, m);
 		if(initTile.getChessPiece().getType() == Piece.PAWN) 
 		{
 			int oneFw = (initTile.getSide() == Side.BLACK) ? 1 : -1;
@@ -154,9 +156,6 @@ public class Board implements Serializable
 		if(destTile.getChessPiece().getType() == Piece.PAWN && (p1.y+m.getY() == 7 || p1.y+m.getY() == 0))  //TODO A CHOICE HERE
 		{
 			int ans;
-//			do
-//				ans = JOptionPane.showOptionDialog(null, "Choose a figure", "You've reached the end" , JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new String[] {"Queen", "Knight", "Bishop", "Rook"}, -1);
-//			while(ans < 0);
 			ans = 4;
 			
 			ChessPiece p;

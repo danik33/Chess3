@@ -9,6 +9,8 @@
     <color name="darkening">#80FFBF60</color>
     <color name="enemyDarkening">#80FF0A0A</color>
     <color name="selectedDarkening">#3364FF32</color>
+    <color name="black">#000000</color>
+    <color name="blue">#1A000CFD</color>
 
 
 </resources>

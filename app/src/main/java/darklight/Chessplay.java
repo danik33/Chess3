@@ -1,7 +1,6 @@
 package darklight;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -27,6 +25,7 @@ import darklight.chess.Move;
 import darklight.chess.Piece;
 import darklight.chess.R;
 import darklight.chess.Side;
+import darklight.chess.SourceMove;
 import darklight.chess.board.Tile;
 
 public class Chessplay extends AppCompatActivity {
@@ -44,7 +43,7 @@ public class Chessplay extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        autoRotate = true  ;
+        autoRotate = false;
         textures = new Bitmap[12];
 
         loadTextures();
@@ -59,6 +58,7 @@ public class Chessplay extends AppCompatActivity {
 
         chessView = findViewById(R.id.chessGame);
         turnLabel = findViewById(R.id.turn);
+
 
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
@@ -82,23 +82,11 @@ public class Chessplay extends AppCompatActivity {
                     reDraw();
                     chessView.setImageBitmap(bm);
                     chessView.invalidate();
-                    System.out.println("tileSize: " + tileSize);
                     refreshTurn();
                     System.out.println("tatarara" + chessView.getWidth());
                 }
             });
         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -125,7 +113,9 @@ public class Chessplay extends AppCompatActivity {
 
                     reDraw();
                     refreshTurn();
-                    System.out.println("hooy" + game.board.getBoard()[0][6]);
+//                    isAttacked(Point point, Side color, Board br);
+                    System.out.println(game.isAttacked(new Point(0, 5), Side.BLACK, game.getBoard()));
+                    System.out.println(game.isAttacked(new Point(0, 5), Side.WHITE, game.getBoard()));
 
 
                     return true;
@@ -191,7 +181,7 @@ public class Chessplay extends AppCompatActivity {
                 if(game.board.occupied(i, j) > 0)
                 {
                     Bitmap im = getTexture(game.board.getBoard()[i][j]);
-                    
+
                     Rect rb = new Rect(i*tileSize, j*tileSize, i*(tileSize+1), j*(tileSize+1));
                     cv.drawBitmap(im, i*tileSize, j*tileSize, p);
                 }
@@ -203,6 +193,7 @@ public class Chessplay extends AppCompatActivity {
 
         int darkeningColor = ResourcesCompat.getColor(getResources(), R.color.darkening, null);
         int enemyDarkening = ResourcesCompat.getColor(getResources(), R.color.enemyDarkening, null);;
+        int black = ResourcesCompat.getColor(getResources(), R.color.black, null);;
 
         if(game.getSelected() != null) {
             int i = game.getSelected().x, j = game.getSelected().y;
@@ -225,6 +216,17 @@ public class Chessplay extends AppCompatActivity {
                     cv.drawRect(new Rect(m.x * tileSize, m.y * tileSize, m.x * tileSize + tileSize, m.y * tileSize + tileSize), p);
                 }
             }
+        }
+
+        if(game.getBoard().getLastMove() != null)
+        {
+            p.setColor(ResourcesCompat.getColor(getResources(), R.color.blue , null));
+            p.setStrokeWidth(10);
+            SourceMove sc = game.getBoard().getLastMove();
+
+            cv.drawRect(new Rect(sc.getSource().x * tileSize, sc.getSource().y * tileSize, sc.getSource().x * tileSize + tileSize, sc.getSource().y * tileSize + tileSize), p);
+            cv.drawRect(new Rect(sc.getDestination().x * tileSize, sc.getDestination().y * tileSize, sc.getDestination().x * tileSize + tileSize, sc.getDestination().y * tileSize + tileSize), p);
+            System.out.println();
         }
 
         if(chessView != null)

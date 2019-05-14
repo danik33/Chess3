@@ -7,17 +7,20 @@ import darklight.chess.pieces.ChessPiece;
 
 public class Player implements Serializable{
 	
-	ArrayList<ChessPiece> pieces;
+	ArrayList<ChessPiece> eatenPieces;
 	Side sd;
+	AI type;
 	
 	public Player(Side sd)
 	{
 		this.sd = sd;
-
+		this.type = AI.PLAYER;
+		eatenPieces = new ArrayList<ChessPiece>();
 	}
 
-    public Player(Side black, AI type)
+    public Player(Side sd, AI type)
 	{
-
+		this(sd);
+		this.type = type;
     }
 }
