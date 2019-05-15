@@ -8,4 +8,7 @@ public enum Side implements Serializable
 	BLACK;
 
 
+	private static final long serialVersionUID = 1L;
+
+
 }

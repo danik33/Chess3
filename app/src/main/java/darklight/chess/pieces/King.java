@@ -1,12 +1,12 @@
 package darklight.chess.pieces;
 
-import android.graphics.Point;
 
 import java.util.ArrayList;
 
 import darklight.chess.Game;
 import darklight.chess.Move;
 import darklight.chess.Piece;
+import darklight.chess.Point;
 import darklight.chess.Side;
 import darklight.chess.board.Condition;
 import darklight.chess.board.Tile;

@@ -1,13 +1,12 @@
 package darklight.chess.pieces;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import darklight.chess.Move;
 import darklight.chess.Piece;
 import darklight.chess.Side;
 
-public class Bishop extends ChessPiece 
+public class Bishop extends ChessPiece
 {
 
 	/**

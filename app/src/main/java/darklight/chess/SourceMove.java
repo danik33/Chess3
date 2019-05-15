@@ -1,12 +1,15 @@
 package darklight.chess;
 
-import android.graphics.Point;
+
+import java.io.Serializable;
 
 
-public class SourceMove {
+public class SourceMove implements Serializable {
 
 	private int sourceX, sourceY;
 	private Move m;
+
+	private static final long serialVersionUID = 1L;
 	
 	public SourceMove(int sourceX, int sourceY, int x, int y) 
 	{

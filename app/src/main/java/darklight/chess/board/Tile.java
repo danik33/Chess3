@@ -10,6 +10,8 @@ public class Tile implements Serializable
 {
 	private ChessPiece chessPiece;
 	private int occupied;
+
+	private static final long serialVersionUID = 1L;
 	
 	public Tile()
 	{

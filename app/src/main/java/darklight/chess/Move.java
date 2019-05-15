@@ -9,7 +9,8 @@ public class Move implements Serializable
 {
 	
 //	this.con = new Condition() { public boolean canMove(Board b) {return true;}};
-	
+	private static final long serialVersionUID = 1L;
+
 	private int xoff, yoff;
 	private Condition con;
 	private boolean repeatable;

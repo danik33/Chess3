@@ -11,6 +11,8 @@ public enum Piece implements Serializable
 	BISHOP,
 	PAWN;
 
+	private static final long serialVersionUID = 1L;
+
 	public static int getValue(Piece p)
 	{
 		if(p == KING)

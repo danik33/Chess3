@@ -1,6 +1,6 @@
  package darklight.chess;
 
-import android.graphics.Point;
+
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,6 +20,7 @@ public class Game implements Serializable
 	Player p1, p2;
 	public Board board;
 	public boolean whiteTurn;
+
 	
 	
 	Stack<Board> boardSnaps;
@@ -41,9 +42,10 @@ public class Game implements Serializable
 		board = new Board();
 		p1 = new Player(Side.WHITE, AI.PLAYER);
 		p2 = new Player(Side.BLACK, AI.RANDOMAI);
-		whiteTurn = true;
+//		board.whiteTurn = true;
 		board.initPieces();
 		shownMoves = new ArrayList<Point>();
+		whiteTurn = true;
 		
 		
 		
@@ -311,11 +313,13 @@ public class Game implements Serializable
 		 
 		if(Board.inBoard(xz, yz))
 		{
+			System.out.println("DAda");
 			int selc; //Index of selected tile if pressed on one of them
 			if(getSelected() != null && (selc = getShownMoves().indexOf(new Point(xz, yz))) > -1)
 			{
 				Point b = getShownMoves().get(selc);
 				boardSnaps.push(new Board(board));
+				System.out.println("DA");
 				board.move(new Point(getSelected().x, getSelected().y), new Move(b.x - getSelected().x, b.y - getSelected().y));
 				
 				getShownMoves().clear();
@@ -417,5 +421,17 @@ public class Game implements Serializable
 
 	public ArrayList<Point> getShownMoves() {
 		return shownMoves;
+	}
+
+	public boolean initialGame()
+	{
+		if(this.whiteTurn == true)
+		{
+			if(this.board.getMoveAmount() == 0)
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -1,13 +1,12 @@
 package darklight.chess.board;
 
-import android.graphics.Point;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 
 import darklight.chess.Move;
 import darklight.chess.Piece;
+import darklight.chess.Point;
 import darklight.chess.Side;
 import darklight.chess.SourceMove;
 import darklight.chess.pieces.Bishop;
@@ -24,13 +23,15 @@ public class Board implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public Tile[][] board;
-	public Point bKingLocation, wKingLocation;
 	public boolean rotated;
 	public boolean real;
+	private int moveAmount;
+
 	public SourceMove lastMove;
-	
-	
+	public Tile[][] board;
+	public Point bKingLocation, wKingLocation;
+
+
 	public Board()
 	{
 		rotated = false;
@@ -43,6 +44,7 @@ public class Board implements Serializable
 			}
 		}
 		real = true;
+		moveAmount = 0;
 	}
 	
 	public Board(Board b)
@@ -70,6 +72,7 @@ public class Board implements Serializable
 		rotated = b.rotated;
 		real = b.real;
 		lastMove = b.lastMove;
+		moveAmount = b.moveAmount;
 	}
 	
 	
@@ -114,6 +117,7 @@ public class Board implements Serializable
 
 	public void move(Point p1, Move m)
 	{
+
 		Tile destTile = board[p1.x + m.getX()][p1.y + m.getY()];
 		Tile initTile = board[p1.x][p1.y];
 		lastMove = new SourceMove(p1.x, p1.y, m);
@@ -193,9 +197,10 @@ public class Board implements Serializable
 		if(destTile.getChessPiece().getType() == Piece.PAWN && (m.equals(new Move(0, 2)) || m.equals(new Move(0, -2))))
 		{
 			((Pawn)destTile.getChessPiece()).dbMove();
-			System.out.println("DA");
 		}
-		System.out.println(board[0][1]);
+
+		++moveAmount;
+
 		
 	}
 	
@@ -291,4 +296,8 @@ public class Board implements Serializable
 	}
 
 
+	public int getMoveAmount()
+	{
+		return this.moveAmount;
+	}
 }

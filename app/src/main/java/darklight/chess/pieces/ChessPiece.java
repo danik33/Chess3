@@ -1,12 +1,12 @@
 package darklight.chess.pieces;
 
-import android.graphics.Point;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import darklight.chess.Move;
 import darklight.chess.Piece;
+import darklight.chess.Point;
 import darklight.chess.Side;
 import darklight.chess.board.Board;
 
@@ -45,7 +45,7 @@ public abstract class ChessPiece implements Serializable
 		
 	}
 	
-	public static void checkMoves(ArrayList<Point> points) 
+	public static void checkMoves(ArrayList<Point> points)
 	{
 		for(int i = 0; i < points.size(); i++)
 		{

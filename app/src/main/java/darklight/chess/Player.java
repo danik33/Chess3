@@ -10,6 +10,8 @@ public class Player implements Serializable{
 	ArrayList<ChessPiece> eatenPieces;
 	Side sd;
 	AI type;
+
+	private static final long serialVersionUID = 1L;
 	
 	public Player(Side sd)
 	{

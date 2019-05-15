@@ -3,7 +3,7 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="darkTile">#b76138</color>
+    <color name="darkTile">#B76138</color>
     <color name="lightTile">#D8AA96</color>
     <color name="white">#FFFFFF</color>
     <color name="darkening">#80FFBF60</color>
@@ -11,6 +11,7 @@
     <color name="selectedDarkening">#3364FF32</color>
     <color name="black">#000000</color>
     <color name="blue">#1A000CFD</color>
+    <color name="transBlack">#4D000000</color>
 
 
 </resources>

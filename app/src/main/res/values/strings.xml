@@ -7,4 +7,10 @@
     <string name="stats">Stats</string>
     <string name="undo">Undo</string>
     <string name="description">The chess board</string>
+    <string name="load">Load</string>
+    <string name="new_game">New game</string>
+    <string name="Descr">Just a color</string>
+    <string name="loadMsg">Load it ?</string>
+    <string name="title">Title</string>
+    <string name="detect">Detected saved game</string>
 </resources>
