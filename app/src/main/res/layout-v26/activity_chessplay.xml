@@ -72,12 +72,11 @@
 
     <RelativeLayout
         android:id="@+id/message"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="200dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:gravity="center"
         android:background="?attr/colorButtonNormal"
         android:orientation="vertical"
         android:visibility="visible"
@@ -117,7 +116,7 @@
             android:paddingEnd="5dp"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="30sp"
+            android:autoSizeTextType="uniform"
              />
 
         <Button
@@ -137,7 +136,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_marginTop="140dp"
-
             android:layout_height="50dp">
 
 
@@ -147,8 +145,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_weight="1"
+                android:minWidth="120dp"
                 android:text="@string/new_game"
-
                 android:textAllCaps="false" />
 
             <Button
@@ -158,8 +156,9 @@
                 android:layout_weight="1"
                 android:layout_marginStart="5dp"
                 android:layout_marginEnd="10dp"
-                android:text="@string/load"
-                android:textAllCaps="false" />
+                android:text="Load"
+                android:textAllCaps="false"
+                 />
 
 
             <Button

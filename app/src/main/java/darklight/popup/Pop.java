@@ -6,5 +6,7 @@ public enum Pop implements Serializable {
 
     NONE,
     SAVEDGAME,
-    ENDGAME
+    ENDGAME,
+    SINGLEQUIT,
+    MULTIQUIT;
 }

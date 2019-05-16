@@ -57,7 +57,7 @@ public class Chessplay extends AppCompatActivity {
     TextView turnLabel;
     View messageView;
     TextView msgTitle, msgText;
-    Button msgBtn1, msgBtn2;
+    Button msgBtn1, msgBtn2, msgBtn3, msgBtn4, msgBtn5;
     Button undo;
     ImageView darkening;
 
@@ -230,6 +230,9 @@ public class Chessplay extends AppCompatActivity {
         msgText = findViewById(R.id.MessageContent);
         msgBtn1 = findViewById(R.id.btn1);
         msgBtn2 = findViewById(R.id.btn2);
+        msgBtn3 = findViewById(R.id.btn3);
+        msgBtn4 = findViewById(R.id.btn4);
+        msgBtn5 = findViewById(R.id.btnCancel);
         undo = findViewById(R.id.retract);
     }
 
@@ -241,11 +244,12 @@ public class Chessplay extends AppCompatActivity {
         Popup p = new Popup(type);
         msgTitle.setText(p.getTitle());
         msgText.setText(p.getText());
-        msgBtn1.setText(p.getBtn1());
-        msgBtn2.setText(p.getBtn2());
+        msgBtn1.setText(p.getButtons()[0]);
+        msgBtn2.setText(p.getButtons()[1]);
         undo.setEnabled(false);
         chessView.setEnabled(false);
         currentMessage = type;
+
 
 
 

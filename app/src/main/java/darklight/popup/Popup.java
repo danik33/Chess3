@@ -4,14 +4,16 @@ public class Popup {
 
     private String title;
     private String text;
-    private String btn1Name, btn2Name;
+    private String[] btnName = new String[5];
 
-    public Popup(String title, String text, String n1, String n2)
+    public Popup(String title, String text, String... buttonNames)
     {
         this.title = title;
         this.text = text;
-        this.btn1Name = n1;
-        this.btn2Name = n2;
+        for(int i = 0; i < buttonNames.length || i < 5; i++)
+        {
+            btnName[i] = buttonNames[i];
+        }
     }
 
     public Popup(Pop predefined)
@@ -20,14 +22,45 @@ public class Popup {
         {
             title = "Found saved game";
             text = "Load saved game ?";
-            btn1Name = "New Game";
-            btn2Name = "Load";
+            btnName[0] = "New Game";
+            btnName[1] = "Load";
+        }
+        else if(predefined == Pop.SINGLEQUIT)
+        {
+            title = "Are you sure you want to quit ?";
+            text = "You want to pause the game or abandon ?";
+            btnName[0] = "Abandon game";
+            btnName[1] = "Draw game";
+            btnName[2] = "Win game";
+            btnName[3] = "Lose game";
+            btnName[4] = "Cancel";
         }
     }
+
+    public Popup(boolean win)
+    {
+        String msg;
+        if(win)
+        {
+            msg = "Victory.";
+        }
+        else
+        {
+            msg = "Checkmate. Defeat.";
+        }
+        title = "Game finished";
+        text = "Game has finished, play again ?";
+        btnName[0] = "Quit";
+        btnName[1] = "Look at the board";
+        btnName[2] = "Play again";
+
+
+    }
+
 
 
     public String getTitle(){ return this.title;   }
     public String getText() { return this.text;    }
-    public String getBtn1() { return this.btn1Name;}
-    public String getBtn2() { return this.btn2Name;}
+    public String[] getButtons() { return this.btnName;}
+
 }

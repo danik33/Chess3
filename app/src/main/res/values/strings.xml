@@ -13,4 +13,5 @@
     <string name="loadMsg">Load it ?</string>
     <string name="title">Title</string>
     <string name="detect">Detected saved game</string>
+    <string name="cancel">Cancel</string>
 </resources>
