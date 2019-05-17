@@ -1,6 +1,7 @@
 package darklight;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -57,7 +58,7 @@ public class Chessplay extends AppCompatActivity {
     TextView turnLabel;
     View messageView;
     TextView msgTitle, msgText;
-    Button msgBtn1, msgBtn2, msgBtn3, msgBtn4, msgBtn5;
+    Button[] msgButtons;
     Button undo;
     ImageView darkening;
 
@@ -98,18 +99,39 @@ public class Chessplay extends AppCompatActivity {
             showPop(Pop.SAVEDGAME);
         }
 
-        msgBtn1.setOnClickListener(new View.OnClickListener() {
+        msgButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 processMessage(1);
             }
         });
-        msgBtn2.setOnClickListener(new View.OnClickListener() {
+        msgButtons[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
                 processMessage(2);
+            }
+        });
+        msgButtons[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(3);
+            }
+        });
+        msgButtons[3].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(4);
+            }
+        });
+        msgButtons[4].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(0);
             }
         });
 
@@ -160,16 +182,19 @@ public class Chessplay extends AppCompatActivity {
                     int yz = y / tileSize;
                     System.out.println("Click on, (" + xz + ", " + yz + ")");
                     if (x > 0 && y > 0)
-                        game.processPress(xz, yz);
-                    game.refreshMoves();
-
-
-                    if (autoRotate)
-                        game.board.rotate(game.whiteTurn);
-
+                    {
+                        if(game.processPress(xz, yz)) //Return true if moved
+                        {
+                            game.refreshMoves();
+                            if (autoRotate)
+                                game.board.rotate(game.whiteTurn);
+                            refreshTurn();
+                            saveGame();
+                        }
+                    }
+                    if(game.hasEnded())
+                        showPop(Pop.ENDGAME2PL);
                     reDraw();
-                    refreshTurn();
-                    saveGame();
 
 
                     return true;
@@ -208,6 +233,56 @@ public class Chessplay extends AppCompatActivity {
             }
             hidePopup();
         }
+        if(currentMessage == Pop.ENDGAME2PL)
+        {
+            if(ans == 1)
+                startActivity(new Intent(this, MainActivity.class));
+            else if(ans == 2)
+                hidePopup();
+            else if(ans == 3)
+            {
+                game = new Game();
+                hidePopup();
+                reDraw();
+                refreshTurn();
+            }
+        }
+        if(currentMessage == Pop.SINGLEQUIT)
+        {
+            if(ans == 0)
+            {
+                hidePopup();
+                return;
+            }
+            if(ans == 2)
+                countGame(Result.DRAW);
+            if(ans == 3)
+            {
+                //TODO PAUSE game(Save and exit)
+            }
+            if (ans == 4)
+                countGame(Result.LOSS);
+            startActivity(new Intent(this, MainActivity.class));
+        }
+    }
+
+    private void countGame(Result res)
+    {
+        //TODO that shit
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!shouldAllowBack()) {
+            showPop(Pop.SINGLEQUIT);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private boolean shouldAllowBack()
+    {
+        return game.hasEnded();
     }
 
     private void hidePopup()
@@ -228,24 +303,36 @@ public class Chessplay extends AppCompatActivity {
         darkening = findViewById(R.id.darkening);
         msgTitle = findViewById(R.id.MessageTitle);
         msgText = findViewById(R.id.MessageContent);
-        msgBtn1 = findViewById(R.id.btn1);
-        msgBtn2 = findViewById(R.id.btn2);
-        msgBtn3 = findViewById(R.id.btn3);
-        msgBtn4 = findViewById(R.id.btn4);
-        msgBtn5 = findViewById(R.id.btnCancel);
+        msgButtons = new Button[5];
+        msgButtons[0] = findViewById(R.id.btn1);
+        msgButtons[1] = findViewById(R.id.btn2);
+        msgButtons[2] = findViewById(R.id.btn3);
+        msgButtons[3] = findViewById(R.id.btn4);
+        msgButtons[4] = findViewById(R.id.btnCancel);
         undo = findViewById(R.id.retract);
     }
 
     private void showPop(Pop type)
     {
-        System.out.println("Showing pop: " + type);
         messageView.setVisibility(View.VISIBLE);
         darkening.setVisibility(View.VISIBLE);
-        Popup p = new Popup(type);
+        Popup p;
+        if(type != Pop.ENDGAME2PL)
+            p = new Popup(type);
+        else
+            p = new Popup(!game.whiteTurn, true);
+
         msgTitle.setText(p.getTitle());
         msgText.setText(p.getText());
-        msgBtn1.setText(p.getButtons()[0]);
-        msgBtn2.setText(p.getButtons()[1]);
+        for (int i = 0; i < 5; i++)
+        {
+            msgButtons[i].setVisibility(View.VISIBLE);
+            msgButtons[i].setText(p.getButtons()[i]);
+            if (p.getButtons()[i] == null || p.getButtons().equals(""))
+                msgButtons[i].setVisibility(View.GONE);
+        }
+
+
         undo.setEnabled(false);
         chessView.setEnabled(false);
         currentMessage = type;
@@ -277,19 +364,25 @@ public class Chessplay extends AppCompatActivity {
 
     private void saveGame()
     {
-        try
-        {
-            FileOutputStream sm = new FileOutputStream(boardSave);
-            ObjectOutputStream ob = new ObjectOutputStream(sm);
-            ob.writeObject(game);
-            ob.close();
-            sm.close();
-            System.out.println("SAVED");
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        Thread save = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                try
+                {
+                    FileOutputStream sm = new FileOutputStream(boardSave);
+                    ObjectOutputStream ob = new ObjectOutputStream(sm);
+                    ob.writeObject(game);
+                    ob.close();
+                    sm.close();
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }, "Save thread..");
+        save.start();
     }
 
 

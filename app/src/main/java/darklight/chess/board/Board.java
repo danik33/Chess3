@@ -117,7 +117,6 @@ public class Board implements Serializable
 
 	public void move(Point p1, Move m)
 	{
-
 		Tile destTile = board[p1.x + m.getX()][p1.y + m.getY()];
 		Tile initTile = board[p1.x][p1.y];
 		lastMove = new SourceMove(p1.x, p1.y, m);

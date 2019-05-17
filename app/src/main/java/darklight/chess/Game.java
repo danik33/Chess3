@@ -246,7 +246,10 @@ public class Game implements Serializable
 				Tile tl = board.getBoard()[i][j];
 				if(tl.getOccupied() > 0 && tl.getSide() == s)
 				{
-					arr.addAll(process(tl.getChessPiece().possibleMoves(),i, j, board));
+					for(Point pn : process(tl.getChessPiece().possibleMoves(),i, j))
+					{
+						arr.add(new SourceMove(i, j, i-pn.x, i-pn.y));
+					}
 				}
 			}
 		}
@@ -294,37 +297,31 @@ public class Game implements Serializable
 		
 		if(!isAttacked(king, s, sim))
 		{
-			System.out.println("Isn't attacked, Move from: (" + x + ", " + y + "), " + mv);
 			if(!avMoves.contains(new Point(x + mv.getX(), y + mv.getY())))
 				avMoves.add(new Point(x + mv.getX(), y + mv.getY()));
 			return true;
-		}
-		else
-		{
-			System.out.println("Attacked, Move from: (" + x + ", " + y + "), " + mv);
 		}
 		return false;
 		
 	}
 
-	public void processPress(int xz, int yz) 
+	public boolean processPress(int xz, int yz)
 	{
-		
+		boolean flag = false;
 		 
 		if(Board.inBoard(xz, yz))
 		{
-			System.out.println("DAda");
 			int selc; //Index of selected tile if pressed on one of them
 			if(getSelected() != null && (selc = getShownMoves().indexOf(new Point(xz, yz))) > -1)
 			{
 				Point b = getShownMoves().get(selc);
 				boardSnaps.push(new Board(board));
-				System.out.println("DA");
 				board.move(new Point(getSelected().x, getSelected().y), new Move(b.x - getSelected().x, b.y - getSelected().y));
 				
 				getShownMoves().clear();
 				setSelected(null);
 				whiteTurn = !whiteTurn;
+				flag = true;
 			}
 			else if(board.occupied(xz, yz) == 1 && whiteTurn)
 			{
@@ -349,10 +346,12 @@ public class Game implements Serializable
 			}
 			if(getSelected() != null)
 			{
-				System.out.println();
 				refreshMoves();
+
 			}
+
 		}
+		return flag;
 		
 	}
 	
@@ -434,4 +433,14 @@ public class Game implements Serializable
 		}
 		return false;
 	}
+
+    public boolean hasEnded()
+	{
+
+		Side s = (whiteTurn) ? Side.WHITE : Side.BLACK;
+		System.out.println("Has ended, side: " + s + " moves: " + getMoves(s).size());
+		if(getMoves(s).size() == 0)
+			return true;
+		return false;
+    }
 }

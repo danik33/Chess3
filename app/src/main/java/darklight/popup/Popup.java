@@ -37,21 +37,23 @@ public class Popup {
         }
     }
 
-    public Popup(boolean win)
+    public Popup(boolean win, boolean twoPlayers)
     {
         String msg;
-        if(win)
-        {
-            msg = "Victory.";
-        }
+        if(twoPlayers)
+            if(win)
+                msg = "White won.";
+            else
+                msg = "Black won.";
         else
-        {
-            msg = "Checkmate. Defeat.";
-        }
-        title = "Game finished";
+            if(win)
+                msg = "Victory.";
+            else
+                msg = "Checkmate. Defeat.";
+        title = msg;
         text = "Game has finished, play again ?";
         btnName[0] = "Quit";
-        btnName[1] = "Look at the board";
+        btnName[1] = "View board";
         btnName[2] = "Play again";
 
 
