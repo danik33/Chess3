@@ -7,6 +7,14 @@
     tools:context="darklight.Chessplay">
 
     <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/background" />
+
+    <ImageView
         android:id="@+id/chessGame"
         android:layout_width="360dp"
         android:layout_height="360dp"
@@ -41,6 +49,24 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <TextView
+        android:id="@+id/gameTime"
+        android:layout_width="152dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="104dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Time: 0:0:0"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/chessGame"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/turn"
         android:layout_width="196dp"
         android:layout_height="67dp"
@@ -49,7 +75,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="52dp"
         android:textAlignment="center"
-        android:textColor="@android:color/black"
+        android:textColor="@color/white"
         android:textSize="30sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/chessGame"
@@ -72,15 +98,14 @@
 
     <RelativeLayout
         android:id="@+id/message"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="200dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@android:drawable/dialog_holo_light_frame"
+        android:background="?attr/colorButtonNormal"
+        android:gravity="center"
         android:orientation="vertical"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.357"
@@ -101,9 +126,9 @@
             android:id="@+id/MessageTitle"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:paddingStart="10dp"
             android:background="@color/lightTile"
             android:contentDescription="@string/title"
+            android:paddingStart="10dp"
             android:text="@string/detect" />
 
         <TextView
@@ -111,33 +136,32 @@
             android:layout_width="match_parent"
             android:layout_height="80dp"
             android:layout_marginTop="20dp"
+            android:autoSizeTextType="uniform"
             android:gravity="center"
-            android:text="@string/loadMsg"
             android:paddingStart="5dp"
             android:paddingEnd="5dp"
+            android:text="@string/loadMsg"
             android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="30sp"
-             />
+            android:textColor="@color/black" />
 
         <Button
 
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginTop="100dp"
             android:layout_marginStart="100dp"
+            android:layout_marginTop="100dp"
             android:layout_weight="1"
             android:text="@string/cancel"
-            android:visibility="gone"
+            android:textAllCaps="false"
 
-            android:textAllCaps="false" />
+            android:visibility="gone" />
 
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="140dp"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            android:layout_marginTop="140dp">
 
 
             <Button
@@ -146,16 +170,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_weight="1"
+                android:minWidth="120dp"
                 android:text="@string/new_game"
-
                 android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn2"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
-                android:text="@string/load"
+                android:text="Load"
                 android:textAllCaps="false" />
 
 
@@ -164,26 +190,20 @@
                 android:id="@+id/btn3"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Button"
-                android:textAllCaps="false"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
-                />
+                android:text="Button"
+                android:textAllCaps="false" />
 
             <Button
                 android:id="@+id/btn4"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-
-                android:visibility="visible"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:text="Button"
-                android:textAllCaps="false" />
-
-
-
-
-
-
+                android:textAllCaps="false"
+                android:visibility="visible" />
 
 
         </LinearLayout>

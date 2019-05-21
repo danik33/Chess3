@@ -1,10 +1,14 @@
 package darklight.popup;
 
-public class Popup {
+import java.io.Serializable;
+
+public class Popup implements Serializable {
 
     private String title;
     private String text;
     private String[] btnName = new String[5];
+
+    private static final long serialVersionUID = 1L;
 
     public Popup(String title, String text, String... buttonNames)
     {
@@ -31,7 +35,7 @@ public class Popup {
             text = "You want to pause the game or abandon ?";
             btnName[0] = "Abandon game";
             btnName[1] = "Draw game";
-            btnName[2] = "Win game";
+            btnName[2] = "Pause game";
             btnName[3] = "Lose game";
             btnName[4] = "Cancel";
         }

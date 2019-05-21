@@ -23,6 +23,7 @@ public class Board implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	public boolean rotated;
 	public boolean real;
 	private int moveAmount;

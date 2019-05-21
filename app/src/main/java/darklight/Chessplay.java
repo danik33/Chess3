@@ -19,19 +19,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import darklight.chess.AI;
 import darklight.chess.Game;
 import darklight.chess.Move;
 import darklight.chess.Piece;
+import darklight.chess.Player;
 import darklight.chess.Point;
 import darklight.chess.R;
 import darklight.chess.Side;
 import darklight.chess.SourceMove;
+import darklight.chess.Stats;
 import darklight.chess.board.Tile;
 import darklight.popup.Pop;
 import darklight.popup.Popup;
@@ -41,13 +40,17 @@ public class Chessplay extends AppCompatActivity {
 
     Game game;
     Game loadedGame;
+    Stats stats;
+    Player p1, p2;
 
-    File boardSave;
+    File gameFile;
+    File statsFile;
     Pop currentMessage;
 
     int tileSize;
     boolean autoRotate;
     int screenWidth, screenHeight;
+    boolean bkSet;
 
 
     Bitmap bm;
@@ -61,81 +64,37 @@ public class Chessplay extends AppCompatActivity {
     Button[] msgButtons;
     Button undo;
     ImageView darkening;
+    TextView timeLabel;
+    ImageView bk;
 
 
 
-
-
-
-
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         currentMessage = Pop.NONE;
         autoRotate = false;
         textures = new Bitmap[12];
+        p1 = new Player(Side.WHITE);
+        p2 = new Player(Side.BLACK, AI.RANDOMAI);
+        bkSet = false;
 
         loadTextures();
 
         game = new Game();
 
 
-
-
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chessplay);
+
+
         File f = getApplicationContext().getFilesDir();
-        boardSave = new File(f.getAbsolutePath() + "//game.dat");
+        gameFile = new File(f.getAbsolutePath() + "//game.dat");
+        statsFile = new File(f.getAbsolutePath() + "//stats.dat");
 
         initViews();
-
-
-        loadedGame = loadGame();
-        if(loadedGame != null && !loadedGame.initialGame())
-        {
-            showPop(Pop.SAVEDGAME);
-        }
-
-        msgButtons[0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                processMessage(1);
-            }
-        });
-        msgButtons[1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                processMessage(2);
-            }
-        });
-        msgButtons[2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                processMessage(3);
-            }
-        });
-        msgButtons[3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                processMessage(4);
-            }
-        });
-        msgButtons[4].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                processMessage(0);
-            }
-        });
-
-
+        loadStats();
+        loadGame();
 
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -144,80 +103,56 @@ public class Chessplay extends AppCompatActivity {
         screenWidth = size.x;
         screenHeight = size.y;
 
+    }
 
 
-
-
-        ViewTreeObserver viewTreeObserver = chessView.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    chessView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    tileSize = chessView.getWidth()/8;
-                    resizeImages();
-                    bm = Bitmap.createBitmap(chessView.getWidth(), chessView.getWidth(), Bitmap.Config.ARGB_8888);
-                    reDraw();
-                    chessView.setImageBitmap(bm);
-                    chessView.invalidate();
-                    refreshTurn();
-                    System.out.println("tatarara" + chessView.getWidth());
-                }
-            });
+    private void refreshTime()
+    {
+        if(game.movesCount > 0)
+        {
+            long time = game.getGameLength(true);
+            timeLabel.setText("Time: " + timeToString(time));
         }
 
+    }
 
+    private String timeToString(long time)
+    {
 
+        int ms = (int) ((time/10)%100);
+        int sc = (int) (time/1000)%60;
+        int mn = (int) (time/60000)%60;
+        return mn + ":" + sc + ":" + ms;
+    }
 
-        chessView.setOnTouchListener(new View.OnTouchListener(){
-
-            @Override
-            public boolean onTouch(View v, MotionEvent m)
+    private void loadGame()
+    {
+        loadedGame = (Game) Saves.loadObject(gameFile);
+        if(loadedGame != null && !loadedGame.initialGame())
+        {
+            if(game.autoResume)
             {
-
-                if(m.getAction() == MotionEvent.ACTION_DOWN) {
-                    int x = (int) m.getX();
-                    int y = (int) m.getY();
-                    int xz = x / tileSize;
-                    int yz = y / tileSize;
-                    System.out.println("Click on, (" + xz + ", " + yz + ")");
-                    if (x > 0 && y > 0)
-                    {
-                        if(game.processPress(xz, yz)) //Return true if moved
-                        {
-                            game.refreshMoves();
-                            if (autoRotate)
-                                game.board.rotate(game.whiteTurn);
-                            refreshTurn();
-                            saveGame();
-                        }
-                    }
-                    if(game.hasEnded())
-                        showPop(Pop.ENDGAME2PL);
-                    reDraw();
-
-
-                    return true;
-                }
-                return false;
-
-            }
-
-        });
-
-
-
-
-        undo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v)
-            {
-                game.retractLastMove();
+                System.out.println("It's autoresume");
+                game = loadedGame;
                 reDraw();
                 refreshTurn();
-            }
-        });
+                game.startGame = System.currentTimeMillis() - game.getGameLength(false);
 
+            }
+            else {
+                System.out.println("It's not autoresume");
+                showPop(Pop.SAVEDGAME);
+            }
+        }
+    }
+
+    private void loadStats()
+    {
+        Stats s1 = (Stats) Saves.loadObject(statsFile);
+        if(s1 == null)
+            stats = new Stats();
+        else
+            stats = s1;
     }
 
     private void processMessage(int ans)
@@ -255,27 +190,38 @@ public class Chessplay extends AppCompatActivity {
                 return;
             }
             if(ans == 2)
-                countGame(Result.DRAW);
+                countGame(Result.DRAW, Side.NONE);
             if(ans == 3)
             {
-                //TODO PAUSE game(Save and exit)
+                game.autoResume = true;
+                super.onBackPressed();
             }
             if (ans == 4)
-                countGame(Result.LOSS);
+                countGame((p1.getColor() == Side.WHITE) ? Result.BLACKWIN : Result.WHITEWIN, p1.getColor());
             startActivity(new Intent(this, MainActivity.class));
         }
     }
 
-    private void countGame(Result res)
+    private void countGame(Result res, Side s)
     {
-        //TODO that shit
+
+        if(gameFile.delete())
+        {
+            System.out.println("Deleted save game");
+        }
+        stats.add(res, game.getGameLength(false), s);
     }
 
+
     @Override
-    public void onBackPressed() {
-        if (!shouldAllowBack()) {
+    public void onBackPressed()
+    {
+        if (!shouldAllowBack())
+        {
             showPop(Pop.SINGLEQUIT);
-        } else {
+        }
+        else
+        {
             super.onBackPressed();
         }
     }
@@ -295,6 +241,7 @@ public class Chessplay extends AppCompatActivity {
         currentMessage = Pop.NONE;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initViews()
     {
         chessView = findViewById(R.id.chessGame);
@@ -310,6 +257,144 @@ public class Chessplay extends AppCompatActivity {
         msgButtons[3] = findViewById(R.id.btn4);
         msgButtons[4] = findViewById(R.id.btnCancel);
         undo = findViewById(R.id.retract);
+        timeLabel = findViewById(R.id.gameTime);
+        bk = findViewById(R.id.background);
+
+        msgButtons[0].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(1);
+            }
+        });
+        msgButtons[1].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(2);
+            }
+        });
+        msgButtons[2].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(3);
+            }
+        });
+        msgButtons[3].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(4);
+            }
+        });
+        msgButtons[4].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                processMessage(0);
+            }
+        });
+
+        chessView.setOnTouchListener(new View.OnTouchListener(){
+
+            @Override
+            public boolean onTouch(View v, MotionEvent m)
+            {
+
+                if(m.getAction() == MotionEvent.ACTION_DOWN) {
+                    int x = (int) m.getX();
+                    int y = (int) m.getY();
+                    int xz = x / tileSize;
+                    int yz = y / tileSize;
+                    System.out.println("Click on, (" + xz + ", " + yz + ")");
+                    if (x > 0 && y > 0)
+                    {
+                        if(game.processPress(xz, yz)) //Return true if moved
+                        {
+                            game.refreshMoves();
+                            if (autoRotate)
+                                game.board.rotate(game.whiteTurn);
+                            refreshTurn();
+                            Saves.saveObject(gameFile, game);
+                        }
+                    }
+                    if(game.hasEnded())
+                        showPop(Pop.ENDGAME2PL);
+                    reDraw();
+
+
+                    return true;
+                }
+                return false;
+
+            }
+        });
+
+
+
+
+        undo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                game.retractLastMove();
+                if(game.movesCount > 0)
+                    game.movesCount--;
+                reDraw();
+                refreshTurn();
+            }
+        });
+
+
+
+
+
+
+
+        Thread refreshTime = new Thread(new Runnable() {
+            @Override
+            public void run()
+            {
+                while(true)
+                {
+                    try
+                    {
+                        runOnUiThread(new Runnable() {
+                            public void run(){
+                                refreshTime();
+                            }
+                        });
+                        Thread.sleep(1000/60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+        });
+        refreshTime.start();
+
+
+
+
+        ViewTreeObserver viewTreeObserver = chessView.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    chessView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    tileSize = chessView.getWidth()/8;
+                    resizeImages();
+                    bm = Bitmap.createBitmap(chessView.getWidth(), chessView.getWidth(), Bitmap.Config.ARGB_8888);
+                    reDraw();
+                    chessView.setImageBitmap(bm);
+                    chessView.invalidate();
+                    refreshTurn();
+                    System.out.println("tatarara" + chessView.getWidth());
+                }
+            });
+        }
     }
 
     private void showPop(Pop type)
@@ -328,7 +413,7 @@ public class Chessplay extends AppCompatActivity {
         {
             msgButtons[i].setVisibility(View.VISIBLE);
             msgButtons[i].setText(p.getButtons()[i]);
-            if (p.getButtons()[i] == null || p.getButtons().equals(""))
+            if (p.getButtons()[i] == null || p.getButtons()[i].equals(""))
                 msgButtons[i].setVisibility(View.GONE);
         }
 
@@ -342,50 +427,6 @@ public class Chessplay extends AppCompatActivity {
 
 
     }
-
-    private Game loadGame() {
-        try
-        {
-            FileInputStream sm = new FileInputStream(boardSave);
-            ObjectInputStream ob = new ObjectInputStream(sm);
-            Object rd = ob.readObject();
-            ob.close();
-            sm.close();
-            System.out.println("LOADED");
-            return (Game)rd;
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void saveGame()
-    {
-        Thread save = new Thread(new Runnable() {
-            @Override
-            public void run()
-            {
-                try
-                {
-                    FileOutputStream sm = new FileOutputStream(boardSave);
-                    ObjectOutputStream ob = new ObjectOutputStream(sm);
-                    ob.writeObject(game);
-                    ob.close();
-                    sm.close();
-                }
-                catch (Exception e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }, "Save thread..");
-        save.start();
-    }
-
-
 
 
 
@@ -431,8 +472,7 @@ public class Chessplay extends AppCompatActivity {
                 if(game.board.occupied(i, j) > 0)
                 {
                     Bitmap im = getTexture(game.board.getBoard()[i][j]);
-
-                    Rect rb = new Rect(i*tileSize, j*tileSize, i*(tileSize+1), j*(tileSize+1));
+//                    Rect rb = new Rect(i*tileSize, j*tileSize, i*(tileSize+1), j*(tileSize+1));
                     cv.drawBitmap(im, i*tileSize, j*tileSize, p);
                 }
             }
@@ -443,7 +483,7 @@ public class Chessplay extends AppCompatActivity {
 
         int darkeningColor = ResourcesCompat.getColor(getResources(), R.color.darkening, null);
         int enemyDarkening = ResourcesCompat.getColor(getResources(), R.color.enemyDarkening, null);;
-        int black = ResourcesCompat.getColor(getResources(), R.color.black, null);;
+        int black = ResourcesCompat.getColor(getResources(), R.color.black, null);
 
         try
         {

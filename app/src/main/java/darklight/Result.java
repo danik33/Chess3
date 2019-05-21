@@ -1,10 +1,12 @@
 package darklight;
 
-public enum Result {
+import java.io.Serializable;
 
-    LOSS,
-    VICTORY,
-    DRAW;
+public enum Result implements Serializable {
+
+    DRAW,
+    WHITEWIN,
+    BLACKWIN;
 
 
 }

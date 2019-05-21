@@ -5,7 +5,8 @@ import java.io.Serializable;
 public enum Side implements Serializable
 {
 	WHITE,
-	BLACK;
+	BLACK,
+	NONE;
 
 
 	private static final long serialVersionUID = 1L;

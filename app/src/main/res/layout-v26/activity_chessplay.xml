@@ -70,6 +70,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@color/transBlack" />
 
+
+
     <RelativeLayout
         android:id="@+id/message"
         android:layout_width="wrap_content"

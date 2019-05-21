@@ -25,4 +25,6 @@ public class Player implements Serializable{
 		this(sd);
 		this.type = type;
     }
+
+    public Side getColor() { return this.sd;}
 }

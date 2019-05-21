@@ -8,6 +8,11 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
+import darklight.GameThumbnail;
+import darklight.Result;
 
 public class Stats implements Serializable{
 
@@ -15,65 +20,35 @@ public class Stats implements Serializable{
      *
      */
     private static final long serialVersionUID = 1L;
-    static File fn;
 
 
+    ArrayList<GameThumbnail> gt;
     int gamesPlayed;
     int gamesWon;
+    int gamesDraw;
 
 
     public Stats()
     {
         this.gamesPlayed = 0;
         this.gamesWon = 0;
+        this.gamesDraw = 0;
+        gt = new ArrayList<>();
     }
 
-    public static void setFile(File fn)
+
+    public void add(Result res, long gameLength, Side s)
     {
-        Stats.fn = fn;
+        gt.add(new GameThumbnail(gameLength, res, s));
+        gamesPlayed++;
+        if((res == Result.WHITEWIN && s == Side.WHITE) || (res == Result.BLACKWIN && s == Side.BLACK))
+        {
+            gamesWon++;
+        }
+        else if(res == Result.DRAW)
+        {
+            gamesDraw++;
+        }
+
     }
-
-
-
-
-
-    public static Stats load()
-    {
-        try
-        {
-            FileInputStream sm = new FileInputStream(fn);
-            ObjectInputStream ob = new ObjectInputStream(sm);
-            Object a = ob.readObject();
-            ob.close();
-            sm.close();
-            return (Stats)a;
-
-        }
-        catch (Exception e)
-        {
-            System.err.println("IZVINITE YA DEBIL");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public void save()
-    {
-        try
-        {
-            FileOutputStream sm = new FileOutputStream(fn);
-            ObjectOutputStream ob = new ObjectOutputStream(sm);
-            ob.writeObject(this);
-            ob.close();
-            sm.close();
-        }
-        catch (Exception e)
-        {
-            System.err.println("IZVINITE YA DEBIL");
-            e.printStackTrace();
-        }
-    }
-
-
-
 }

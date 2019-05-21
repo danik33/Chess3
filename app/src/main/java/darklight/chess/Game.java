@@ -1,7 +1,6 @@
  package darklight.chess;
 
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -17,50 +16,47 @@ public class Game implements Serializable
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+
 	Player p1, p2;
 	public Board board;
-	public boolean whiteTurn;
 
-	
-	
+
+	public boolean whiteTurn;
+	public long gameLength, startGame;
+	public int movesCount;
+	public boolean autoResume;
+
+
+
 	Stack<Board> boardSnaps;
-	
-	
-	
-	
-	
+
 	private Point selected;
-	
+
 	private ArrayList<Point> shownMoves;
 
-	
-	
-	
+
 	public Game()
 	{
+
+		autoResume = false;
 		boardSnaps = new Stack<Board>();
 		board = new Board();
 		p1 = new Player(Side.WHITE, AI.PLAYER);
 		p2 = new Player(Side.BLACK, AI.RANDOMAI);
-//		board.whiteTurn = true;
 		board.initPieces();
 		shownMoves = new ArrayList<Point>();
 		whiteTurn = true;
-		
-		
-		
-		
+		movesCount = 0;
+		gameLength = 0;
+
+
 	}
 	
-	public Board getBoard() { return this.board; } 
-	
-	
+	public Board getBoard() { return this.board; }
 
-	
 
-	
-	
-	public ArrayList<SourceMove> process(ArrayList<Move> moves, int x, int y, Board b) 
+	public ArrayList<SourceMove> process(ArrayList<Move> moves, int x, int y, Board b)
 	{
 		if(board.rotated)
 		{
@@ -75,9 +71,9 @@ public class Game implements Serializable
 		int enemy = (b.occupied(x, y) == 1) ? 2 : 1;
 		ChessPiece piece = b.getBoard()[x][y].getChessPiece();
 		Tile[][] br = b.getBoard();
-		
-		
-		if(piece.getType() == Piece.PAWN)                //TODO if on last tile action, meanwhile crashes the shownmoves 
+
+
+		if(piece.getType() == Piece.PAWN)                //TODO if on last tile action, meanwhile crashes the shownmoves
 		{
 			int oneFw = (enemy == 1) ? 1 : -1;
 			if(board.rotated)
@@ -98,14 +94,14 @@ public class Game implements Serializable
 			{
 				avMoves.add(new SourceMove(x, y, 1, oneFw));
 			}
-			
+
 			return avMoves;
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		for(Move m : moves)
 		{
 			SourceMove sm = new SourceMove(x, y, m);
@@ -132,7 +128,7 @@ public class Game implements Serializable
 					a = new Point(a.x + m.getX(), a.y + m.getY());
 				}
 				if(m.doesEats() && b.occupied(a) == enemy)
-				{	
+				{
 					avMoves.add(new SourceMove(x, y, new Move(a.x-x, a.y-y)));
 				}
 			}
@@ -140,8 +136,8 @@ public class Game implements Serializable
 		return avMoves;
 	}
 
-	
-	public ArrayList<Point> process(ArrayList<Move> moves, int x, int y) 
+
+	public ArrayList<Point> process(ArrayList<Move> moves, int x, int y)
 	{
 
 		if(board.rotated)
@@ -155,8 +151,8 @@ public class Game implements Serializable
 		int enemy = (board.occupied(x, y) == 1) ? 2 : 1;
 		ChessPiece piece = board.getBoard()[x][y].getChessPiece();
 		Tile[][] br = board.getBoard();
-		
-		
+
+
 		if(piece instanceof Pawn)                //TODO if on last tile action, meanwhile crashes the shownmoves
 		{
 			int oneFw = (enemy == 1) ? 1 : -1;
@@ -188,8 +184,8 @@ public class Game implements Serializable
 			}
 			return avMoves;
 		}
-		
-		if(piece.getType() == Piece.KING)                
+
+		if(piece.getType() == Piece.KING)
 		{
 			for(Move m : moves)
 			{
@@ -202,10 +198,10 @@ public class Game implements Serializable
 			}
 			return avMoves;
 		}
-		
-		
 
-		
+
+
+
 		for(Move m : moves)
 		{
 			if(!m.isRepeatable())
@@ -213,7 +209,7 @@ public class Game implements Serializable
 				Point a = new Point(x + m.getX(), y + m.getY());
 				if(board.occupied(a) == 0 || (m.doesEats() && board.occupied(a) == enemy))
 				{
-					
+
 					if(m.canMove(this, x, y))
 						addTo(m, x, y, avMoves);
 				}
@@ -228,7 +224,7 @@ public class Game implements Serializable
 					a = new Point(a.x + m.getX(), a.y + m.getY());
 				}
 				if(m.doesEats() && board.occupied(a) == enemy)
-				{	
+				{
 					addTo(a, x, y, avMoves);
 				}
 			}
@@ -256,14 +252,14 @@ public class Game implements Serializable
 		return arr;
 	}
 
-	private boolean addTo(Point a2, int x, int y, ArrayList<Point> avMoves) 
+	private boolean addTo(Point a2, int x, int y, ArrayList<Point> avMoves)
 	{
 		Move mv = new Move(a2.x-x, a2.y-y);
 		return addTo(mv, x, y, avMoves);
-		
+
 	}
 
-	private boolean addTo(Move mv, int x, int y, ArrayList<Point> avMoves) 
+	private boolean addTo(Move mv, int x, int y, ArrayList<Point> avMoves)
 	{
 		Board sim = board.simMove(new Point(x,y), mv);
 		sim.real = false;
@@ -280,7 +276,7 @@ public class Game implements Serializable
 			{
 				if(sim.getBoard()[i][j].getOccupied() != 0 && sim.getBoard()[i][j].getType() == Piece.KING)
 				{
-					
+
 					if(s == Side.WHITE && sim.getBoard()[i][j].getSide() == Side.WHITE)
 					{
 						king = sim.wKingLocation;
@@ -292,9 +288,9 @@ public class Game implements Serializable
 				}
 			}
 		}
-		
-		
-		
+
+
+
 		if(!isAttacked(king, s, sim))
 		{
 			if(!avMoves.contains(new Point(x + mv.getX(), y + mv.getY())))
@@ -302,13 +298,13 @@ public class Game implements Serializable
 			return true;
 		}
 		return false;
-		
+
 	}
 
 	public boolean processPress(int xz, int yz)
 	{
 		boolean flag = false;
-		 
+
 		if(Board.inBoard(xz, yz))
 		{
 			int selc; //Index of selected tile if pressed on one of them
@@ -317,7 +313,7 @@ public class Game implements Serializable
 				Point b = getShownMoves().get(selc);
 				boardSnaps.push(new Board(board));
 				board.move(new Point(getSelected().x, getSelected().y), new Move(b.x - getSelected().x, b.y - getSelected().y));
-				
+
 				getShownMoves().clear();
 				setSelected(null);
 				whiteTurn = !whiteTurn;
@@ -337,7 +333,6 @@ public class Game implements Serializable
 					setSelected(null);
 				else
 					setSelected(new Point(xz, yz));
-//				System.out.println(xz + "," + yz);
 			}
 			else
 			{
@@ -347,14 +342,50 @@ public class Game implements Serializable
 			if(getSelected() != null)
 			{
 				refreshMoves();
-
 			}
+			if(flag == true && movesCount == 0)
+				startGame = System.currentTimeMillis();
 
 		}
+
+		refreshThings(flag);
+
+
 		return flag;
-		
+
 	}
-	
+
+	private void refreshThings(final boolean flag)
+	{
+		Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run()
+			{
+
+				if(flag)
+					movesCount++;
+
+				if(movesCount > 1 && !hasEnded())
+				{
+					long curTime = System.currentTimeMillis();
+					gameLength = curTime-startGame;
+				}
+			}
+		});
+		t1.start();
+	}
+
+	public long getGameLength(boolean refresh)
+	{
+		if(refresh)
+		{
+			long curTime = System.currentTimeMillis();
+			gameLength = curTime-startGame;
+		}
+		return gameLength;
+	}
+
+
 	public void retractLastMove()
 	{
 		if(!boardSnaps.empty())
@@ -363,14 +394,11 @@ public class Game implements Serializable
 			whiteTurn = !whiteTurn;
 			getShownMoves().clear();
 		}
-		
-	}
-	
-	
 
-	
-	
-	public boolean isAttacked(Point point, Side color, Board br) 
+	}
+
+
+	public boolean isAttacked(Point point, Side color, Board br)
 	{
 		for(int i = 0; i < br.getBoard().length; i++)
 		{

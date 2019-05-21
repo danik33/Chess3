@@ -17,6 +17,8 @@ public abstract class ChessPiece implements Serializable
 	protected boolean moved;
 	protected boolean alive;
 
+	private static final long serialVersionUID = 1L;
+
 	public abstract int getValue();
 	
 	public ChessPiece(Side color)

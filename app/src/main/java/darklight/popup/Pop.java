@@ -9,4 +9,6 @@ public enum Pop implements Serializable {
     ENDGAME2PL,
     SINGLEQUIT,
     MULTIQUIT;
+
+    private static final long serialVersionUID = 1L;
 }
