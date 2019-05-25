@@ -13,7 +13,7 @@ import darklight.chess.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button single, mp, stats, settings;
+    Button single, mp, settings;
     Intent intnt;
     Reciever b = new Reciever();
 
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
         single = findViewById(R.id.singleplay);
         mp = findViewById(R.id.multiplay);
+        settings = findViewById(R.id.options);
+
         mp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -57,6 +59,14 @@ public class MainActivity extends AppCompatActivity {
                 intnt.putExtra("Ai2", AI.RANDOMAI);
 
                 startActivity(intnt);
+            }
+        });
+        settings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                Intent sett = new Intent(getApplicationContext(), Options.class );
+                startActivity(sett);
             }
         });
 

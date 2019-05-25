@@ -18,7 +18,7 @@ public class Reciever extends BroadcastReceiver {
 
 
 
-        if(batteryPct < 0.15)
+        if(batteryPct < 0.05)
             Toast.makeText(context, "Battery is low, be careful. (" + batteryPct*100+ "%)", Toast.LENGTH_LONG).show();
 
     }

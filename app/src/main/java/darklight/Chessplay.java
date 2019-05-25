@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
@@ -34,7 +35,6 @@ import darklight.chess.Point;
 import darklight.chess.R;
 import darklight.chess.Side;
 import darklight.chess.SourceMove;
-import darklight.chess.Stats;
 import darklight.chess.board.Tile;
 import darklight.popup.Pop;
 import darklight.popup.Popup;
@@ -42,20 +42,20 @@ import darklight.popup.Popup;
 public class Chessplay extends AppCompatActivity {
 
 
+    public static AI Aidiff = AI.HUNGRYAI;
     Game game;
     Game loadedGame;
-    Stats stats;
     Player p1, p2;
     AI Ai1, Ai2;
 
     File gameFile, multigame;
-    File statsFile;
     Pop currentMessage;
 
     int tileSize;
     boolean autoRotate;
     int screenWidth, screenHeight;
     boolean bkSet;
+    static boolean playSound = true;
 
 
     Bitmap bm;
@@ -71,6 +71,7 @@ public class Chessplay extends AppCompatActivity {
     ImageView darkening;
     TextView timeLabel;
     ImageView bk;
+    MediaPlayer[] moveSounds;
 
 
 
@@ -78,6 +79,10 @@ public class Chessplay extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+        moveSounds = new MediaPlayer[3];
+        moveSounds[0] = MediaPlayer.create(getApplicationContext(), R.raw.move1);
+        moveSounds[1] = MediaPlayer.create(getApplicationContext(), R.raw.move2);
+        moveSounds[2] = MediaPlayer.create(getApplicationContext(), R.raw.move3);
 
         Ai1 = (AI) getIntent().getSerializableExtra("Ai1");
         Ai2 = (AI) getIntent().getSerializableExtra("Ai2");
@@ -85,7 +90,7 @@ public class Chessplay extends AppCompatActivity {
         autoRotate = false;
         textures = new Bitmap[12];
         p1 = new Player(Side.WHITE, Ai1);
-        p2 = new Player(Side.BLACK, Ai2);
+        p2 = new Player(Side.BLACK, Aidiff);
         bkSet = false;
 
         loadTextures();
@@ -101,11 +106,14 @@ public class Chessplay extends AppCompatActivity {
         File f = getApplicationContext().getFilesDir();
         gameFile = new File(f.getAbsolutePath() + "//game.dat");
         multigame = new File(f.getAbsolutePath() + "//multigame.dat");
-        statsFile = new File(f.getAbsolutePath() + "//stats.dat");
 
         initViews();
-        loadStats();
         loadGame();
+        Side turn = (game.whiteTurn) ? Side.WHITE : Side.BLACK;
+        if(p2.getType() != AI.PLAYER && p2.getColor() == turn)
+        {
+            game.whiteTurn = !game.whiteTurn;
+        }
 
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -147,7 +155,12 @@ public class Chessplay extends AppCompatActivity {
                     return;
             }
             refreshTurn();
+            if(p2.getType() != AI.PLAYER)
+                Saves.saveObject(gameFile, game);
+            else
+                Saves.saveObject(multigame, game);
         }
+
 
     }
 
@@ -194,14 +207,6 @@ public class Chessplay extends AppCompatActivity {
         }
     }
 
-    private void loadStats()
-    {
-        Stats s1 = (Stats) Saves.loadObject(statsFile);
-        if(s1 == null)
-            stats = new Stats();
-        else
-            stats = s1;
-    }
 
     private void processMessage(int ans)
     {
@@ -257,7 +262,6 @@ public class Chessplay extends AppCompatActivity {
         {
             System.out.println("Deleted save game");
         }
-        stats.add(res, game.getGameLength(false), s);
     }
 
 
@@ -367,6 +371,7 @@ public class Chessplay extends AppCompatActivity {
                                 Saves.saveObject(gameFile, game);
                             else
                                 Saves.saveObject(multigame, game);
+                            playMoveSound();
                             checkAIMove();
                         }
                     }
@@ -381,6 +386,8 @@ public class Chessplay extends AppCompatActivity {
 
             }
         });
+
+
 
 
 
@@ -448,6 +455,18 @@ public class Chessplay extends AppCompatActivity {
             });
         }
     }
+
+    public void playMoveSound()
+    {
+        if(playSound)
+            moveSounds[rand(0,2)].start();
+    }
+
+    public static int rand(int min, int max)
+    {
+        return (int) (Math.random()*(max-min+1)+min);
+    }
+
 
     private void showPop(Pop type)
     {

@@ -1,11 +1,8 @@
- package darklight.chess;
-
+package darklight.chess;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
-
-import javax.xml.transform.Source;
 
 import darklight.chess.board.Board;
 import darklight.chess.board.Tile;
@@ -42,12 +39,12 @@ public class Game implements Serializable
 	public Game(AI p1, AI p2)
 	{
 		autoResume = false;
-		boardSnaps = new Stack<Board>();
+		boardSnaps = new Stack<>();
 		board = new Board();
 		this.p1 = new Player(Side.WHITE, p1);
 		this.p2 = new Player(Side.BLACK, p2);
 		board.initPieces();
-		shownMoves = new ArrayList<Point>();
+		shownMoves = new ArrayList<>();
 		whiteTurn = true;
 		movesCount = 0;
 		gameLength = 0;
@@ -85,7 +82,7 @@ public class Game implements Serializable
 		Tile[][] br = b.getBoard();
 
 
-		if(piece.getType() == Piece.PAWN)                //TODO if on last tile action, meanwhile crashes the shownmoves
+		if(piece.getType() == Piece.PAWN)                //TODO if on last tile action, meanwhile does a queen
 		{
 			int oneFw = (enemy == 1) ? 1 : -1;
 			if(board.rotated)

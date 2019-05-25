@@ -1,7 +1,5 @@
 package darklight;
 
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +10,6 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import darklight.chess.R;
 
 
 public class Saves{
@@ -74,13 +71,4 @@ public class Saves{
         return null;
     }
 
-
-    public static class StatsActivity extends AppCompatActivity {
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_stats);
-        }
-    }
 }
