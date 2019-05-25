@@ -104,11 +104,12 @@
         android:layout_marginBottom="8dp"
         android:background="?attr/colorButtonNormal"
         android:gravity="center"
+        android:maxWidth="400dp"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.357"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -149,13 +150,15 @@
             android:id="@+id/btnCancel"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_marginStart="100dp"
+            android:layout_marginStart="120dp"
             android:layout_marginTop="100dp"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_horizontal"
             android:layout_weight="1"
             android:text="@string/cancel"
             android:textAllCaps="false"
 
-            android:visibility="gone" />
+            android:visibility="visible" />
 
 
         <LinearLayout
@@ -169,6 +172,7 @@
                 android:id="@+id/btn1"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
+                android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:minWidth="120dp"
                 android:text="@string/new_game"
@@ -178,8 +182,6 @@
                 android:id="@+id/btn2"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:text="Load"
                 android:textAllCaps="false" />
@@ -190,7 +192,6 @@
                 android:id="@+id/btn3"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_marginStart="5dp"
                 android:layout_weight="1"
                 android:text="Button"
                 android:textAllCaps="false" />
@@ -199,7 +200,7 @@
                 android:id="@+id/btn4"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:text="Button"
                 android:textAllCaps="false"

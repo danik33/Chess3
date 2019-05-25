@@ -2,6 +2,7 @@ package darklight.chess.board;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 
 import darklight.chess.Move;
@@ -198,11 +199,9 @@ public class Board implements Serializable
 		{
 			((Pawn)destTile.getChessPiece()).dbMove();
 		}
-
 		++moveAmount;
-
-		
 	}
+
 	
 	public Board simMove(Point p1, Move m)
 	{

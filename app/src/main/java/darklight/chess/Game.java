@@ -5,9 +5,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import javax.xml.transform.Source;
+
 import darklight.chess.board.Board;
 import darklight.chess.board.Tile;
 import darklight.chess.pieces.ChessPiece;
+import darklight.chess.pieces.King;
 import darklight.chess.pieces.Pawn;
 
 public class Game implements Serializable
@@ -18,7 +21,7 @@ public class Game implements Serializable
 	private static final long serialVersionUID = 1L;
 
 
-	Player p1, p2;
+	public Player p1, p2;
 	public Board board;
 
 
@@ -36,14 +39,13 @@ public class Game implements Serializable
 	private ArrayList<Point> shownMoves;
 
 
-	public Game()
+	public Game(AI p1, AI p2)
 	{
-
 		autoResume = false;
 		boardSnaps = new Stack<Board>();
 		board = new Board();
-		p1 = new Player(Side.WHITE, AI.PLAYER);
-		p2 = new Player(Side.BLACK, AI.RANDOMAI);
+		this.p1 = new Player(Side.WHITE, p1);
+		this.p2 = new Player(Side.BLACK, p2);
 		board.initPieces();
 		shownMoves = new ArrayList<Point>();
 		whiteTurn = true;
@@ -52,7 +54,17 @@ public class Game implements Serializable
 
 
 	}
-	
+
+
+	public Game(Game game, Board copy)
+	{
+		this.board = copy;
+		p1 = new Player(game.p1);
+		p2 = new Player(game.p2);
+		boardSnaps = new Stack<Board>();
+		whiteTurn = game.whiteTurn;
+	}
+
 	public Board getBoard() { return this.board; }
 
 
@@ -232,6 +244,27 @@ public class Game implements Serializable
 		return avMoves;
 	}
 
+	public Game simMove(Point p1, Move m)
+	{
+		Board copy = new Board(board);
+		if((copy.board[p1.x][p1.y].getChessPiece() instanceof King)) //Right castling i guess
+		{
+			if(m.equals(new Move(2, 0)))
+				copy.move(new Point(7, p1.y), new Move(-2, 0));
+			else if(m.equals(new Move(-2, 0)))
+				copy.move(new Point(0, p1.y), new Move(3, 0));
+		}
+		copy.board[p1.x + m.getX()][p1.y + m.getY()].setChessPiece(copy.board[p1.x][p1.y].getChessPiece());
+		if(!copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece().hasMoved() && copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece() instanceof Pawn)
+		{
+			Pawn b = (Pawn) copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece();
+			b.dbMove();
+		}
+		copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece().setMoved();
+		copy.board[p1.x][p1.y].clear();
+		return new Game(this, copy);
+	}
+
 	public ArrayList<SourceMove> getMoves(Side s)
 	{
 		ArrayList<SourceMove> arr = new ArrayList<SourceMove>();
@@ -244,7 +277,7 @@ public class Game implements Serializable
 				{
 					for(Point pn : process(tl.getChessPiece().possibleMoves(),i, j))
 					{
-						arr.add(new SourceMove(i, j, i-pn.x, i-pn.y));
+						arr.add(new SourceMove(i, j, pn.x-i, pn.y-j));
 					}
 				}
 			}
@@ -348,6 +381,7 @@ public class Game implements Serializable
 
 		}
 
+
 		refreshThings(flag);
 
 
@@ -391,7 +425,8 @@ public class Game implements Serializable
 		if(!boardSnaps.empty())
 		{
 			board = boardSnaps.pop();
-			whiteTurn = !whiteTurn;
+			if(p2.getType() == AI.PLAYER)
+				whiteTurn = !whiteTurn;
 			getShownMoves().clear();
 		}
 

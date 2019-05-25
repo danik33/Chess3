@@ -23,9 +23,9 @@ public class Stats implements Serializable{
 
 
     ArrayList<GameThumbnail> gt;
-    int gamesPlayed;
-    int gamesWon;
-    int gamesDraw;
+    public int gamesPlayed;
+    public int gamesWon;
+    public int gamesDraw;
 
 
     public Stats()
@@ -35,6 +35,8 @@ public class Stats implements Serializable{
         this.gamesDraw = 0;
         gt = new ArrayList<>();
     }
+
+
 
 
     public void add(Result res, long gameLength, Side s)

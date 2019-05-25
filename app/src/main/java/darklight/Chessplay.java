@@ -7,7 +7,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
@@ -42,8 +46,9 @@ public class Chessplay extends AppCompatActivity {
     Game loadedGame;
     Stats stats;
     Player p1, p2;
+    AI Ai1, Ai2;
 
-    File gameFile;
+    File gameFile, multigame;
     File statsFile;
     Pop currentMessage;
 
@@ -69,19 +74,24 @@ public class Chessplay extends AppCompatActivity {
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+        Ai1 = (AI) getIntent().getSerializableExtra("Ai1");
+        Ai2 = (AI) getIntent().getSerializableExtra("Ai2");
         currentMessage = Pop.NONE;
         autoRotate = false;
         textures = new Bitmap[12];
-        p1 = new Player(Side.WHITE);
-        p2 = new Player(Side.BLACK, AI.RANDOMAI);
+        p1 = new Player(Side.WHITE, Ai1);
+        p2 = new Player(Side.BLACK, Ai2);
         bkSet = false;
 
         loadTextures();
 
-        game = new Game();
+
+        game = new Game(Ai1, Ai2);
 
 
         super.onCreate(savedInstanceState);
@@ -90,6 +100,7 @@ public class Chessplay extends AppCompatActivity {
 
         File f = getApplicationContext().getFilesDir();
         gameFile = new File(f.getAbsolutePath() + "//game.dat");
+        multigame = new File(f.getAbsolutePath() + "//multigame.dat");
         statsFile = new File(f.getAbsolutePath() + "//stats.dat");
 
         initViews();
@@ -102,6 +113,41 @@ public class Chessplay extends AppCompatActivity {
         display.getSize(size);
         screenWidth = size.x;
         screenHeight = size.y;
+        checkAIMove();
+    }
+
+    private void checkAIMove()
+    {
+        if(!game.hasEnded()) {
+            System.out.println(Ai1 + ", " + Ai2);
+            System.out.println(p1.getType() + ", " + p2.getType());
+            Side curTurn = (game.whiteTurn) ? Side.WHITE : Side.BLACK;
+            if (p1.getColor() == curTurn)
+            {
+                if (p1.getType() != AI.PLAYER) {
+                    SourceMove m = p2.getNextMove(game);
+                    game.getBoard().move(m.getSource(), m.getMove());
+                    game.getShownMoves().clear();
+                    game.setSelected(null);
+                    game.whiteTurn = !game.whiteTurn;
+                    checkAIMove();
+
+                } else
+                    return;
+            } else if (p2.getColor() == curTurn) {
+                if (p2.getType() != AI.PLAYER) {
+                    SourceMove m = p2.getNextMove(game);
+                    game.getBoard().move(m.getSource(), m.getMove());
+                    game.getShownMoves().clear();
+                    game.setSelected(null);
+                    game.whiteTurn = !game.whiteTurn;
+
+                    checkAIMove();
+                } else
+                    return;
+            }
+            refreshTurn();
+        }
 
     }
 
@@ -127,7 +173,10 @@ public class Chessplay extends AppCompatActivity {
 
     private void loadGame()
     {
-        loadedGame = (Game) Saves.loadObject(gameFile);
+        if(p1.getType() != AI.PLAYER || p2.getType() != AI.PLAYER)
+            loadedGame = (Game) Saves.loadObject(gameFile);
+        else
+            loadedGame = (Game) Saves.loadObject(multigame);
         if(loadedGame != null && !loadedGame.initialGame())
         {
             if(game.autoResume)
@@ -137,7 +186,6 @@ public class Chessplay extends AppCompatActivity {
                 reDraw();
                 refreshTurn();
                 game.startGame = System.currentTimeMillis() - game.getGameLength(false);
-
             }
             else {
                 System.out.println("It's not autoresume");
@@ -176,7 +224,7 @@ public class Chessplay extends AppCompatActivity {
                 hidePopup();
             else if(ans == 3)
             {
-                game = new Game();
+                game = new Game(Ai1, Ai2);
                 hidePopup();
                 reDraw();
                 refreshTurn();
@@ -259,7 +307,6 @@ public class Chessplay extends AppCompatActivity {
         undo = findViewById(R.id.retract);
         timeLabel = findViewById(R.id.gameTime);
         bk = findViewById(R.id.background);
-
         msgButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -316,7 +363,11 @@ public class Chessplay extends AppCompatActivity {
                             if (autoRotate)
                                 game.board.rotate(game.whiteTurn);
                             refreshTurn();
-                            Saves.saveObject(gameFile, game);
+                            if(p2.getType() != AI.PLAYER)
+                                Saves.saveObject(gameFile, game);
+                            else
+                                Saves.saveObject(multigame, game);
+                            checkAIMove();
                         }
                     }
                     if(game.hasEnded())
@@ -339,6 +390,7 @@ public class Chessplay extends AppCompatActivity {
             public void onClick(View v)
             {
                 game.retractLastMove();
+
                 if(game.movesCount > 0)
                     game.movesCount--;
                 reDraw();
@@ -399,6 +451,12 @@ public class Chessplay extends AppCompatActivity {
 
     private void showPop(Pop type)
     {
+        Vibrator v = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            v.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            v.vibrate(100);
+
         messageView.setVisibility(View.VISIBLE);
         darkening.setVisibility(View.VISIBLE);
         Popup p;

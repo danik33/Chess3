@@ -2,13 +2,25 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="darklight.chess">
 
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
+
+
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <receiver android:name="darklight.Reciever"  android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_BATTERY_LOW"/>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+            </intent-filter>
+        </receiver>
         <activity android:name="darklight.Saves$StatsActivity"></activity>
         <activity android:name="darklight.Chessplay" />
         <activity android:name="darklight.MainActivity">
@@ -19,5 +31,10 @@
             </intent-filter>
         </activity>
     </application>
+
+
+
+
+
 
 </manifest>
