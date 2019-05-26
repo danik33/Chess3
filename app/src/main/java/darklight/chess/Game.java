@@ -20,14 +20,10 @@ public class Game implements Serializable
 
 	public Player p1, p2;
 	public Board board;
-
-
 	public boolean whiteTurn;
 	public long gameLength, startGame;
 	public int movesCount;
 	public boolean autoResume;
-
-
 
 	Stack<Board> boardSnaps;
 
@@ -51,7 +47,6 @@ public class Game implements Serializable
 
 
 	}
-
 
 	public Game(Game game, Board copy)
 	{
@@ -241,26 +236,6 @@ public class Game implements Serializable
 		return avMoves;
 	}
 
-	public Game simMove(Point p1, Move m)
-	{
-		Board copy = new Board(board);
-		if((copy.board[p1.x][p1.y].getChessPiece() instanceof King)) //Right castling i guess
-		{
-			if(m.equals(new Move(2, 0)))
-				copy.move(new Point(7, p1.y), new Move(-2, 0));
-			else if(m.equals(new Move(-2, 0)))
-				copy.move(new Point(0, p1.y), new Move(3, 0));
-		}
-		copy.board[p1.x + m.getX()][p1.y + m.getY()].setChessPiece(copy.board[p1.x][p1.y].getChessPiece());
-		if(!copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece().hasMoved() && copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece() instanceof Pawn)
-		{
-			Pawn b = (Pawn) copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece();
-			b.dbMove();
-		}
-		copy.board[p1.x + m.getX()][p1.y + m.getY()].getChessPiece().setMoved();
-		copy.board[p1.x][p1.y].clear();
-		return new Game(this, copy);
-	}
 
 	public ArrayList<SourceMove> getMoves(Side s)
 	{
@@ -468,7 +443,6 @@ public class Game implements Serializable
 			this.shownMoves = process(moves, getSelected().x, getSelected().y);
 		}
 	}
-
 
 	public Point getSelected() {
 		return selected;

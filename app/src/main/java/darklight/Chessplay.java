@@ -54,7 +54,6 @@ public class Chessplay extends AppCompatActivity {
     int tileSize;
     boolean autoRotate;
     int screenWidth, screenHeight;
-    boolean bkSet;
     static boolean playSound = true;
 
 
@@ -70,7 +69,6 @@ public class Chessplay extends AppCompatActivity {
     Button undo;
     ImageView darkening;
     TextView timeLabel;
-    ImageView bk;
     MediaPlayer[] moveSounds;
 
 
@@ -91,7 +89,6 @@ public class Chessplay extends AppCompatActivity {
         textures = new Bitmap[12];
         p1 = new Player(Side.WHITE, Ai1);
         p2 = new Player(Side.BLACK, Aidiff);
-        bkSet = false;
 
         loadTextures();
 
@@ -164,7 +161,6 @@ public class Chessplay extends AppCompatActivity {
 
     }
 
-
     private void refreshTime()
     {
         if(game.movesCount > 0)
@@ -206,7 +202,6 @@ public class Chessplay extends AppCompatActivity {
             }
         }
     }
-
 
     private void processMessage(int ans)
     {
@@ -264,7 +259,6 @@ public class Chessplay extends AppCompatActivity {
         }
     }
 
-
     @Override
     public void onBackPressed()
     {
@@ -310,7 +304,6 @@ public class Chessplay extends AppCompatActivity {
         msgButtons[4] = findViewById(R.id.btnCancel);
         undo = findViewById(R.id.retract);
         timeLabel = findViewById(R.id.gameTime);
-        bk = findViewById(R.id.background);
         msgButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -467,7 +460,6 @@ public class Chessplay extends AppCompatActivity {
         return (int) (Math.random()*(max-min+1)+min);
     }
 
-
     private void showPop(Pop type)
     {
         Vibrator v = (Vibrator) getSystemService(getApplicationContext().VIBRATOR_SERVICE);
@@ -504,8 +496,6 @@ public class Chessplay extends AppCompatActivity {
 
 
     }
-
-
 
     private void refreshTurn()
     {

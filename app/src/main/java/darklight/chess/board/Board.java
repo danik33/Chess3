@@ -33,7 +33,6 @@ public class Board implements Serializable
 	public Tile[][] board;
 	public Point bKingLocation, wKingLocation;
 
-
 	public Board()
 	{
 		rotated = false;
@@ -76,8 +75,7 @@ public class Board implements Serializable
 		lastMove = b.lastMove;
 		moveAmount = b.moveAmount;
 	}
-	
-	
+
 	public void setPiece(ChessPiece piece, int x, int y)
 	{
 		if(inBoard(x,y))
@@ -223,12 +221,6 @@ public class Board implements Serializable
 		copy.board[p1.x][p1.y].clear();
 		return copy;
 	}
-	
-	
-	
-
-	
-	
 	
 
 	public void initPieces() 

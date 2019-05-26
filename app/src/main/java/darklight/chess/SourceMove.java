@@ -41,9 +41,7 @@ public class SourceMove implements Serializable {
 	{
 		return new Point(sourceX, sourceY);
 	}
-	
-	public int getX() { return this.sourceX; }
-	public int getY() { return this.sourceY; }
+
 	
 	@Override
 	public String toString()

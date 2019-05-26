@@ -63,8 +63,6 @@ public class Popup implements Serializable {
 
     }
 
-
-
     public String getTitle(){ return this.title;   }
     public String getText() { return this.text;    }
     public String[] getButtons() { return this.btnName;}

@@ -49,8 +49,6 @@ public class Player implements Serializable{
 		return arr.get(Chessplay.rand(0, arr.size()-1));
 	}
 
-
-
 	public AI getType() { return this.type; }
 
 
