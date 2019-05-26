@@ -7,9 +7,16 @@
     tools:context="darklight.MainActivity">
 
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/background" />
+
     <LinearLayout
         android:layout_width="244dp"
-        android:layout_height="193dp"
+        android:layout_height="500dp"
         android:layout_marginStart="52dp"
         android:layout_marginTop="208dp"
         android:orientation="vertical"
@@ -26,7 +33,9 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:background="@drawable/nicebutton"
             android:text="@string/playsp"
+
             android:textAllCaps="false" />
 
         <Button
@@ -34,6 +43,8 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nicebutton"
             android:text="@string/playmp"
             android:textAllCaps="false" />
 
@@ -41,6 +52,8 @@
             android:id="@+id/options"
             android:layout_width="match_parent"
             android:layout_height="60dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/nicebutton"
             android:text="@string/options"
             android:textAllCaps="false" />
 
